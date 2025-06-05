@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Information</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>User Information</h1>
+  <button id="reload">Reload</button>
+  <div id="user"></div>
+  <div id="error"></div>
+
+  <script>
+    const user = document.getElementById('user');
+    const error = document.getElementById('error');
+    const reload = document.getElementById('reload');
+    const url = 'https://jsonplaceholder.typicode.com/users';
+
+    async function fetchUser() {
+      user.innerHTML = '';
+      error.innerHTML = '';
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+
+        data.forEach(u => {
+          const userDiv = document.createElement('div');
+          userDiv.innerHTML = `
+            <h2>${u.name}</h2>
+            <p><strong>Email:</strong> ${u.email}</p>
+            <p><strong>Phone:</strong> ${u.phone}</p>
+            <p><strong>Address:</strong> ${u.address.street}, ${u.address.city}</p>
+          `;
+          user.appendChild(userDiv);
+        });
+      } catch (err) {
+        error.innerHTML = `<p>Error: ${err.message}</p>`;
+        console.error('Fetch error:', err);
+      }
+    }
+
+
+    fetchUser();
+
+    reload.addEventListener('click', fetchUser);
+  </script>
+</body>
+</html>
